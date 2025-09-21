@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Products Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transform: translateY(10px);
+            opacity: 0;
+            animation: slideUp 0.6s forwards;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+
+        .product-card:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #666;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+        }
+
+        .switch-form a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .user-info {
+            color: white;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">⚡ ElectricStore</div>
+        <div class="auth-section">
+            <div class="user-info" id="userInfo">
+                Welcome, <span id="userName"></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-primary" onclick="openSignupModal()">Sign Up</button>
+                <button class="btn btn-secondary" onclick="openLoginModal()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="loading" id="loading">Loading products...</div>
+        <div class="products-grid hidden" id="productsGrid">
+            <div class="product-card">
+                <div class="product-image">🔌</div>
+                <div class="product-title">Smart Power Adapter</div>
+                <div class="product-price">₹2,999</div>
+                <div class="product-description">65W USB-C fast charging adapter with intelligent power delivery</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">💡</div>
+                <div class="product-title">LED Smart Bulb</div>
+                <div class="product-price">₹1,299</div>
+                <div class="product-description">WiFi enabled smart bulb with 16 million colors and voice control</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🎧</div>
+                <div class="product-title">Wireless Earbuds</div>
+                <div class="product-price">₹4,999</div>
+                <div class="product-description">True wireless earbuds with active noise cancellation</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">⌚</div>
+                <div class="product-title">Smart Watch</div>
+                <div class="product-price">₹12,999</div>
+                <div class="product-description">Fitness tracker with heart rate monitor and GPS</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">📱</div>
+                <div class="product-title">Wireless Charger</div>
+                <div class="product-price">₹1,999</div>
+                <div class="product-description">Fast wireless charging pad compatible with all Qi devices</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🔋</div>
+                <div class="product-title">Power Bank</div>
+                <div class="product-price">₹3,499</div>
+                <div class="product-description">20,000mAh portable charger with fast charging support</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🎵</div>
+                <div class="product-title">Bluetooth Speaker</div>
+                <div class="product-price">₹5,999</div>
+                <div class="product-description">Waterproof portable speaker with 360° surround sound</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">📺</div>
+                <div class="product-title">Smart TV Stick</div>
+                <div class="product-price">₹2,499</div>
+                <div class="product-description">4K streaming device with voice remote and HDR support</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🖱️</div>
+                <div class="product-title">Wireless Mouse</div>
+                <div class="product-price">₹1,799</div>
+                <div class="product-description">Ergonomic wireless mouse with precision tracking</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <div class="product-image">⌨️</div>
+                <div class="product-title">Mechanical Keyboard</div>
+                <div class="product-price">₹6,999</div>
+                <div class="product-description">RGB backlit mechanical gaming keyboard with custom switches</div>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2 class="form-title">Create Account</h2>
+            <div id="signupAlert"></div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="number" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Retype Password</label>
+                    <input type="password" id="retypepassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+            </form>
+            <div class="switch-form">
+                Already have an account? <a href="#" onclick="switchToLogin()">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 class="form-title">Login</h2>
+            <div id="loginAlert"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div class="switch-form">
+                Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Your Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzou-Ubq4LZlrY0vwyerNh6YZmCMTsTVHNWc7VB2yOyj7p0SlzJfRuH4ZYdZGlxwdPB4g/exec';
+        
+        let currentUser = null;
+
+        // Check if user is already logged in
+        window.addEventListener('load', function() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showUserInterface();
+            } else {
+                setTimeout(openSignupModal, 1000); // Auto-open signup after 1 second
+            }
+            setTimeout(showProducts, 500);
+        });
+
+        function showProducts() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('productsGrid').classList.remove('hidden');
+        }
+
+        function openSignupModal() {
+            document.getElementById('signupModal').classList.add('show');
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function switchToLogin() {
+            closeModal('signupModal');
+            openLoginModal();
+        }
+
+        function switchToSignup() {
+            closeModal('loginModal');
+            openSignupModal();
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertDiv = document.getElementById(elementId);
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function showUserInterface() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userName').textContent = currentUser.fullname;
+        }
+
+        function hideUserInterface() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'none';
+        }
+
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fullname: document.getElementById('fullname').value,
+                number: document.getElementById('number').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                retypepassword: document.getElementById('retypepassword').value
+            };
+
+            // Client-side validation
+            if (formData.password !== formData.retypepassword) {
+                showAlert('signupAlert', 'Passwords do not match!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'signup',
+                        ...formData
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('signupAlert', 'Account created successfully!', 'success');
+                    currentUser = formData;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    setTimeout(() => {
+                        closeModal('signupModal');
+                        showUserInterface();
+                    }, 1500);
+                } else {
+                    showAlert('signupAlert', result.message || 'Error creating account', 'error');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                showAlert('signupAlert', 'Network error. Please try again.', 'error');
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'login',
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('loginAlert', 'Login successful!', 'success');
+                    currentUser = result.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    setTimeout(() => {
+                        closeModal('loginModal');
+                        showUserInterface();
+                    }, 1500);
+                } else {
+                    showAlert('loginAlert', result.message || 'Account not found', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('loginAlert', 'Network error. Please try again.', 'error');
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            hideUserInterface();
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
